@@ -233,7 +233,7 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 			v.User[k2] = users[k2]
 		}
 		v.TotalClicks = func() value.IntValSlice {
-			var a value.IntValSlice
+			a := value.IntValSlice{}
 			for k2, v2 := range v.RawTotalClicks {
 				a = append(a, value.IntVal{User: k2, Value: v2})
 			}
@@ -241,7 +241,7 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.AvgClickSpeed = func() value.FloatValSlice {
-			var a value.FloatValSlice
+			a := value.FloatValSlice{}
 			for k2, v2 := range v.RawAvgSpeed {
 				if len(v2) == 0 {
 					continue
@@ -257,7 +257,7 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.SlowClickSpeed = func() value.FloatValSlice {
-			var a value.FloatValSlice
+			a := value.FloatValSlice
 			for k2, v2 := range v.RawSlowSpeed {
 				if len(v2) == 0 {
 					continue
@@ -274,7 +274,7 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.FastClickSpeed = func() value.FloatValSlice {
-			var a value.FloatValSlice
+			a := value.FloatValSlice{}
 			for k2, v2 := range v.RawFastSpeed {
 				if len(v2) == 0 {
 					continue
