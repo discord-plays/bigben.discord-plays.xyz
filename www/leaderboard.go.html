@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <title>Big Ben Leaderboard</title>
+
+    <meta name="theme-color" content="#469b4c"/>
+    <meta name="default-theme" content="auto"/>
+    <meta name="author" content="bigben.mrmelon54.com"/>
+    <meta name="description" content="bigben.mrmelon54.com"/>
+    <meta name="keywords" content="go,bigben.mrmelon54.com,bigben"/>
+    <meta name="referrer" content="no-referrer"/>
+
+    <meta property="og:title" content="Big Ben"/>
+    <meta property="og:url" content="https://bigben.mrmelon54.com"/>
+    <meta property="og:type" content="object"/>
+    <meta property="og:image" content="https://bigben.mrmelon54.com/bigben.png"/>
+    <meta property="og:site_name" content="BigBen"/>
+
+    <link rel="icon" type="image/png" href="/bigben.png"/>
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
+</head>
+
+<body>
+<div id="app">
+    <div class="center-screen-wrapper">
+        <div class="center-screen">
+            <div class="login-overlay">
+                {{if .Login.LoggedIn}}
+                    <img src="{{.Login.UserIcon}}" width="32" height="32"/>
+                    <span>{{.Login.UserTag}}</span>
+                    <a href="/logout">Logout</a>
+                {{else}}
+                    <a href="/login">Login</a>
+                {{end}}
+            </div>
+            <div class="title-header">
+                <div class="title-logo">
+                    <a href="https://bigben.mrmelon54.com">
+                        <img src="/bigben.png" class="logo" alt="BigBen Logo">
+                    </a>
+                </div>
+                <h1 class="title-text">Big Ben</h1>
+            </div>
+            {{if .Login.LoggedIn}}
+                {{if .HasC }}
+                    <div class="coming-soon">
+                        <div class="leaderboard-list">
+                            {{with $C := .C}}
+                                <div class="leaderboard-item">
+                                    <h2>Total Clicks</h2>
+                                    <ol>
+                                        {{range $i := .TotalClicks}}
+                                            <li>{{renderUser $C.User $i.User}} ({{$i.Value}})</li>
+                                        {{end}}
+                                    </ol>
+                                </div>
+                                <div class="leaderboard-item">
+                                    <h2>Average Reaction Speed</h2>
+                                    <ol>
+                                        {{range $i := .AvgClickSpeed}}
+                                            <li>{{renderUser $C.User $i.User}} ({{renderTime $i.Value}})</li>
+                                        {{end}}
+                                    </ol>
+                                </div>
+                                <div class="leaderboard-item">
+                                    <h2>Slowest Reaction Speed</h2>
+                                    <ol>
+                                        {{range $i := .SlowClickSpeed}}
+                                            <li>{{renderUser $C.User $i.User}} ({{renderTime $i.Value}})</li>
+                                        {{end}}
+                                    </ol>
+                                </div>
+                                <div class="leaderboard-item">
+                                    <h2>Fastest Reaction Speed</h2>
+                                    <ol>
+                                        {{range $i := .FastClickSpeed}}
+                                            <li>{{renderUser $C.User $i.User}} ({{renderTime $i.Value}})</li>
+                                        {{end}}
+                                    </ol>
+                                </div>
+                            {{end}}
+                        </div>
+                    </div>
+                {{else}}
+                    <p class="coming-soon">Missing leaderboard.</p>
+                {{end}}
+            {{else}}
+                <p class="coming-soon">Missing leaderboard.</p>
+            {{end}}
+        </div>
+    </div>
+</div>
+</body>
+</html>

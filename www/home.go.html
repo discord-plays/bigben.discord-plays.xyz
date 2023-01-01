@@ -19,66 +19,48 @@
     <meta property="og:site_name" content="BigBen"/>
 
     <link rel="icon" type="image/png" href="/bigben.png"/>
-
-    <style>
-        html, body {
-            margin: 0;
-            background-color: #141318;
-            color: #dddddd;
-        }
-
-        .center-screen-wrapper {
-            margin: 0;
-            display: flex;
-            place-items: center;
-            min-width: 320px;
-            min-height: calc(100vh - 50px);
-            box-sizing: border-box;
-        }
-
-        .center-screen {
-            max-width: min(100%, 1280px);
-            margin: 0 auto;
-            padding: 2rem;
-            text-align: center;
-            box-sizing: border-box;
-            width: 100%;
-        }
-
-        .title-logo {
-
-        }
-
-        .title-logo .logo {
-            height: 6em;
-            padding: 1.5em;
-            will-change: filter;
-        }
-
-        .title-text {
-            margin: 0 0 24px;
-            font-size: 3.2em;
-            line-height: 1.1;
-        }
-
-        .coming-soon {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
 </head>
 
 <body>
 <div id="app">
     <div class="center-screen-wrapper">
         <div class="center-screen">
+            <div class="login-overlay">
+                {{if .Login.LoggedIn}}
+                    <img src="{{.Login.UserIcon}}" width="32" height="32"/>
+                    <span>{{.Login.UserTag}}</span>
+                    <a href="/logout">Logout</a>
+                {{else}}
+                    <a href="/login">Login</a>
+                {{end}}
+            </div>
             <div class="title-logo">
                 <a href="https://bigben.mrmelon54.com">
-                    <img src="/bigben.png" class="logo svelte-pxyxdn" alt="Melon Logo">
+                    <img src="/bigben.png" class="logo" alt="BigBen Logo">
                 </a>
             </div>
             <h1 class="title-text">Big Ben</h1>
             <p class="coming-soon">Bonging every hour.</p>
-            <p class="coming-soon">Online leaderboard under construction.</p>
+            {{if .Login.LoggedIn}}
+                <div class="coming-soon">
+                    {{range $key, $value := .Guilds}}
+                        <div class="year-list">
+                            <h2 class="year-header">{{ $key }}</h2>
+                            <div class="guild-list">
+                                {{range $item := $value}}
+                                    <a class="guild-item" href="/{{$key}}/{{$item.Id}}">
+                                        <img src="{{ $item.Icon }}"/>
+                                        <span>{{ $item.Name }}</span>
+                                    </a>
+                                {{end}}
+                            </div>
+                        </div>
+                    {{end}}
+                </div>
+            {{else}}
+                <p class="coming-soon">Login to view online leaderboard.</p>
+            {{end}}
         </div>
     </div>
 </div>
