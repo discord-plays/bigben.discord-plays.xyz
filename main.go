@@ -257,7 +257,7 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.SlowClickSpeed = func() value.FloatValSlice {
-			a := value.FloatValSlice
+			a := value.FloatValSlice{}
 			for k2, v2 := range v.RawSlowSpeed {
 				if len(v2) == 0 {
 					continue
