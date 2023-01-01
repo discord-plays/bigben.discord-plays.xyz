@@ -94,7 +94,7 @@ func ProcessData(cacheDir string, buf2 *bytes.Buffer) error {
 			for k2, v2 := range v.RawTotalClicks {
 				a = append(a, value.IntVal{User: k2, Value: v2})
 			}
-			sort.Sort(a)
+			sort.Sort(sort.Reverse(a))
 			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.AvgClickSpeed = func() value.FloatValSlice {
