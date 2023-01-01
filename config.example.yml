@@ -1,0 +1,3 @@
+listen: :8080
+year:
+  2022: 'https://example.com/download.tar.gz'
