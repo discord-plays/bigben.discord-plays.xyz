@@ -47,10 +47,11 @@ var (
 				return time.Duration(a * float64(time.Second)).Truncate(time.Millisecond).String()
 			},
 			"renderUser": func(users map[snowflake.ID]string, id snowflake.ID) string {
-				if u, ok := users[id]; ok {
-					return u[:len(u)-5]
+				u := users[id]
+				if u == "" || len(u) <= 5 {
+					return "Unknown User"
 				}
-				return "Unknown User"
+				return u[:len(u)-5]
 			},
 		}).Parse(rawLeaderboardPage)
 		if err != nil {
