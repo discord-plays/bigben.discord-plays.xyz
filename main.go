@@ -209,6 +209,9 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 				avg = append(avg, z)
 				slo = append(slo, z)
 				fas = append(fas, z)
+				g.RawAvgSpeed[t.UserId] = avg
+				g.RawSlowSpeed[t.UserId] = slo
+				g.RawFastSpeed[t.UserId] = fas
 			})
 			if err != nil {
 				return err
@@ -270,7 +273,7 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 				}
 				a = append(a, value.FloatVal{User: k2, Value: z})
 			}
-			sort.Sort(a)
+			sort.Sort(sort.Reverse(a))
 			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.FastClickSpeed = func() value.FloatValSlice {
