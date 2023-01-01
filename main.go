@@ -238,11 +238,14 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 				a = append(a, value.IntVal{User: k2, Value: v2})
 			}
 			sort.Sort(a)
-			return a[:10]
+			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.AvgClickSpeed = func() value.FloatValSlice {
 			var a value.FloatValSlice
 			for k2, v2 := range v.RawAvgSpeed {
+				if len(v2) == 0 {
+					continue
+				}
 				var z float64
 				for _, i := range v2 {
 					z += i
@@ -250,7 +253,8 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 				z = z / float64(len(v2))
 				a = append(a, value.FloatVal{User: k2, Value: z})
 			}
-			return a
+			sort.Sort(a)
+			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.SlowClickSpeed = func() value.FloatValSlice {
 			var a value.FloatValSlice
@@ -266,11 +270,12 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 				}
 				a = append(a, value.FloatVal{User: k2, Value: z})
 			}
-			return a
+			sort.Sort(a)
+			return a[:IntMin(a.Len(), 10)]
 		}()
 		v.FastClickSpeed = func() value.FloatValSlice {
 			var a value.FloatValSlice
-			for k2, v2 := range v.RawSlowSpeed {
+			for k2, v2 := range v.RawFastSpeed {
 				if len(v2) == 0 {
 					continue
 				}
@@ -282,7 +287,8 @@ func processData(cacheDir string, buf2 *bytes.Buffer) error {
 				}
 				a = append(a, value.FloatVal{User: k2, Value: z})
 			}
-			return a
+			sort.Sort(a)
+			return a[:IntMin(a.Len(), 10)]
 		}()
 
 		log.Printf("Creating cache for server %s\n", k.String())
