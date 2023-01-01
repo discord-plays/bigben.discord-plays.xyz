@@ -1,3 +1,7 @@
 listen: :8080
+cache: cache
+clientId: id
+clientSecret: secret
+redirectUrl: 'http://localhost:8080/login'
 year:
   2022: 'https://example.com/download.tar.gz'
