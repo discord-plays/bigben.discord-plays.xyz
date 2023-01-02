@@ -121,7 +121,7 @@ func ProcessData(cacheDir string, buf2 *bytes.Buffer) error {
 				}
 				z := v2[0]
 				for _, i := range v2 {
-					if i < z {
+					if i > z {
 						z = i
 					}
 				}
@@ -138,7 +138,7 @@ func ProcessData(cacheDir string, buf2 *bytes.Buffer) error {
 				}
 				z := v2[0]
 				for _, i := range v2 {
-					if i > z {
+					if i < z {
 						z = i
 					}
 				}
