@@ -2,6 +2,7 @@ html, body {
     margin: 0;
     background-color: #141318;
     color: #dddddd;
+    font-size: 20px;
 }
 
 .center-screen-wrapper {
@@ -109,6 +110,10 @@ html, body {
     text-decoration: none;
 }
 
+.guild-list .guild-item h2 {
+    margin-bottom: 0;
+}
+
 .guild-list .guild-item img {
     aspect-ratio: 1/1;
     width: 100%;
@@ -120,6 +125,7 @@ html, body {
     padding: 16px 16px 8px;
     color: #dddddd;
     text-decoration: none;
+    text-align: left;
 }
 
 .leaderboard-list {
@@ -140,4 +146,12 @@ html, body {
     border-left: 4px solid #d4af37;
     box-sizing: border-box;
     text-decoration: none;
+}
+
+.leaderboard-list .leaderboard-item h2 {
+    margin-bottom: 0;
+}
+
+.leaderboard-list .leaderboard-item ol li {
+    text-align: left;
 }

@@ -225,10 +225,12 @@ func main() {
 				err = leaderboardPage.Execute(rw, struct {
 					Login loginData
 					HasC  bool
+					Year  string
 					C     *utils.CacheData
 				}{
 					Login: data,
 					HasC:  c != nil,
+					Year:  yearNum,
 					C:     c,
 				})
 				if err != nil {
