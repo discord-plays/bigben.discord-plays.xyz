@@ -7,7 +7,9 @@ import (
 	"flag"
 	"github.com/disgoorg/disgo/discord"
 	"github.com/disgoorg/disgo/oauth2"
+	"github.com/disgoorg/disgo/rest"
 	"github.com/disgoorg/snowflake/v2"
+	"github.com/go-session/session"
 	"github.com/gorilla/mux"
 	"github.com/mrmelon54/bigben.mrmelon54.com/utils"
 	"gopkg.in/yaml.v3"
@@ -65,6 +67,8 @@ func main() {
 	var configPath string
 	flag.StringVar(&configPath, "conf", "config.yml", "Config file")
 	flag.Parse()
+
+	session.NewMemoryStore()
 
 	configFile, err := os.Open(configPath)
 	if err != nil {
@@ -149,7 +153,7 @@ func main() {
 						iconRaw := *i.Icon
 						conf := discord.DefaultCDNConfig()
 						if strings.HasPrefix(iconRaw, "a_") && !conf.Format.Animated() {
-							conf.Format = discord.ImageFormatGIF
+							conf.Format = discord.FileFormatGIF
 						}
 						conf.Values["size"] = 512
 						guildIcon = discord.GuildIcon.URL(conf.Format, conf.Values, i.ID.String(), iconRaw)
@@ -186,7 +190,7 @@ func main() {
 		)
 		if code != "" && state != "" {
 			token := randStr(64)
-			_, err := oauthClient.StartSession(code, state, token)
+			_, _, err := oauthClient.StartSession(code, state, rest.WithToken(discord.TokenTypeBot, token))
 			if err != nil {
 				http.Error(rw, "500 Error starting session", http.StatusInternalServerError)
 				return
