@@ -89,16 +89,16 @@ func ProcessData(cacheDir string, buf2 *bytes.Buffer) error {
 		for k2 := range v.User {
 			v.User[k2] = users[k2]
 		}
-		v.TotalClicks = func() value.IntValSlice {
-			a := value.IntValSlice{}
+		v.TotalClicks = func() value.UserStatSlice[int] {
+			a := value.UserStatSlice[int]{}
 			for k2, v2 := range v.RawTotalClicks {
-				a = append(a, value.IntVal{User: k2, Value: v2})
+				a = append(a, value.UserStat[int]{User: k2, Value: v2})
 			}
 			sort.Sort(sort.Reverse(a))
 			return a[:IntMin(a.Len(), 10)]
 		}()
-		v.AvgClickSpeed = func() value.FloatValSlice {
-			a := value.FloatValSlice{}
+		v.AvgClickSpeed = func() value.UserStatSlice[float64] {
+			a := value.UserStatSlice[float64]{}
 			for k2, v2 := range v.RawAvgSpeed {
 				if len(v2) == 0 {
 					continue
@@ -108,13 +108,13 @@ func ProcessData(cacheDir string, buf2 *bytes.Buffer) error {
 					z += i
 				}
 				z = z / float64(len(v2))
-				a = append(a, value.FloatVal{User: k2, Value: z})
+				a = append(a, value.UserStat[float64]{User: k2, Value: z})
 			}
 			sort.Sort(a)
 			return a[:IntMin(a.Len(), 10)]
 		}()
-		v.SlowClickSpeed = func() value.FloatValSlice {
-			a := value.FloatValSlice{}
+		v.SlowClickSpeed = func() value.UserStatSlice[float64] {
+			a := value.UserStatSlice[float64]{}
 			for k2, v2 := range v.RawSlowSpeed {
 				if len(v2) == 0 {
 					continue
@@ -125,13 +125,13 @@ func ProcessData(cacheDir string, buf2 *bytes.Buffer) error {
 						z = i
 					}
 				}
-				a = append(a, value.FloatVal{User: k2, Value: z})
+				a = append(a, value.UserStat[float64]{User: k2, Value: z})
 			}
 			sort.Sort(sort.Reverse(a))
 			return a[:IntMin(a.Len(), 10)]
 		}()
-		v.FastClickSpeed = func() value.FloatValSlice {
-			a := value.FloatValSlice{}
+		v.FastClickSpeed = func() value.UserStatSlice[float64] {
+			a := value.UserStatSlice[float64]{}
 			for k2, v2 := range v.RawFastSpeed {
 				if len(v2) == 0 {
 					continue
@@ -142,7 +142,7 @@ func ProcessData(cacheDir string, buf2 *bytes.Buffer) error {
 						z = i
 					}
 				}
-				a = append(a, value.FloatVal{User: k2, Value: z})
+				a = append(a, value.UserStat[float64]{User: k2, Value: z})
 			}
 			sort.Sort(a)
 			return a[:IntMin(a.Len(), 10)]

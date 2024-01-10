@@ -42,13 +42,13 @@ func (a *AsyncRead) read() *CacheData {
 }
 
 type CacheData struct {
-	User           map[snowflake.ID]string    `json:"user"`
-	TotalClicks    value.IntValSlice          `json:"total_clicks"`
-	AvgClickSpeed  value.FloatValSlice        `json:"avg_click_speed"`
-	SlowClickSpeed value.FloatValSlice        `json:"slow_click_speed"`
-	FastClickSpeed value.FloatValSlice        `json:"fast_click_speed"`
-	RawTotalClicks map[snowflake.ID]int       `json:"-"`
-	RawAvgSpeed    map[snowflake.ID][]float64 `json:"-"`
-	RawSlowSpeed   map[snowflake.ID][]float64 `json:"-"`
-	RawFastSpeed   map[snowflake.ID][]float64 `json:"-"`
+	User           map[snowflake.ID]string      `json:"user"`
+	TotalClicks    value.UserStatSlice[int]     `json:"total_clicks"`
+	AvgClickSpeed  value.UserStatSlice[float64] `json:"avg_click_speed"`
+	SlowClickSpeed value.UserStatSlice[float64] `json:"slow_click_speed"`
+	FastClickSpeed value.UserStatSlice[float64] `json:"fast_click_speed"`
+	RawTotalClicks map[snowflake.ID]int         `json:"-"`
+	RawAvgSpeed    map[snowflake.ID][]float64   `json:"-"`
+	RawSlowSpeed   map[snowflake.ID][]float64   `json:"-"`
+	RawFastSpeed   map[snowflake.ID][]float64   `json:"-"`
 }

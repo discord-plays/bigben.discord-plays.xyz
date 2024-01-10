@@ -10,13 +10,14 @@ require (
 )
 
 require (
+	github.com/1f349/mjwt v0.2.1
 	github.com/disgoorg/disgo v0.17.0
 	github.com/disgoorg/snowflake/v2 v2.0.1
-	github.com/go-session/session v3.1.2+incompatible
 )
 
 require (
 	github.com/disgoorg/json v1.1.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sasha-s/go-csync v0.0.0-20240107134140-fcbab37b09ad // indirect
-	github.com/smartystreets/goconvey v1.8.1 // indirect
 )

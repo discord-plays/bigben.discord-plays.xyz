@@ -1,3 +1,4 @@
 config.yml
 .idea/
 cache/
+session-key.private.pem

@@ -2,20 +2,23 @@ package main
 
 import (
 	"bytes"
+	cryptoRand "crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	_ "embed"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"flag"
+	"github.com/1f349/mjwt"
 	"github.com/disgoorg/disgo/discord"
 	"github.com/disgoorg/disgo/oauth2"
-	"github.com/disgoorg/disgo/rest"
 	"github.com/disgoorg/snowflake/v2"
-	"github.com/go-session/session"
 	"github.com/gorilla/mux"
 	"github.com/mrmelon54/bigben.mrmelon54.com/utils"
 	"gopkg.in/yaml.v3"
 	"html/template"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -25,8 +28,6 @@ import (
 )
 
 var (
-	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
 	//go:embed www/home.go.html
 	rawHomePage string
 	//go:embed www/leaderboard.go.html
@@ -68,7 +69,12 @@ func main() {
 	flag.StringVar(&configPath, "conf", "config.yml", "Config file")
 	flag.Parse()
 
-	session.NewMemoryStore()
+	wd := filepath.Dir(configPath)
+
+	signer, err := mjwt.NewMJwtSignerFromFileOrCreate("bigben.discord-plays.xyz", filepath.Join(wd, "session-key.private.pem"), cryptoRand.Reader, 4096)
+	if err != nil {
+		log.Fatal("NewMJwtSignerFromFileOrCreate(): ", err)
+	}
 
 	configFile, err := os.Open(configPath)
 	if err != nil {
@@ -129,7 +135,7 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-	router.HandleFunc("/", handleCheckLogin(oauthClient, func(rw http.ResponseWriter, req *http.Request, session *oauth2.Session, data loginData) {
+	router.HandleFunc("/", checkLogin(signer, oauthClient, func(rw http.ResponseWriter, req *http.Request, session *oauth2.Session, data loginData) {
 		if session == nil || !data.LoggedIn {
 			err := homePage.Execute(rw, struct{ Login loginData }{Login: data})
 			if err != nil {
@@ -189,22 +195,32 @@ func main() {
 			state = query.Get("state")
 		)
 		if code != "" && state != "" {
-			token := randStr(64)
-			_, _, err := oauthClient.StartSession(code, state, rest.WithToken(discord.TokenTypeBot, token))
+			oaSess, _, err := oauthClient.StartSession(code, state)
 			if err != nil {
 				http.Error(rw, "500 Error starting session", http.StatusInternalServerError)
 				return
 			}
-			http.SetCookie(rw, &http.Cookie{Name: "login-token", Value: token, Path: "/", Expires: time.Now().Add(time.Hour * 24 * 7)})
+			marshal, err := json.Marshal(oaSess)
+			if err != nil {
+				http.Error(rw, "500 Error saving session", http.StatusInternalServerError)
+				return
+			}
+			encrypt, err := rsa.EncryptOAEP(sha256.New(), cryptoRand.Reader, signer.PublicKey(), marshal, []byte("bigben-session"))
+			if err != nil {
+				http.Error(rw, "500 Error encrypting session", http.StatusInternalServerError)
+				return
+			}
+			encryptB64 := base64.RawURLEncoding.EncodeToString(encrypt)
+			http.SetCookie(rw, &http.Cookie{Name: "bigben-session", Value: encryptB64, Path: "/", Expires: time.Now().Add(time.Hour * 24 * 7)})
 			http.Redirect(rw, req, "/", http.StatusFound)
 			return
 		}
 		http.Redirect(rw, req, oauthClient.GenerateAuthorizationURL(config.RedirectUrl, discord.PermissionsNone, 0, true, discord.OAuth2ScopeIdentify, discord.OAuth2ScopeGuilds), http.StatusFound)
 	})
 	router.HandleFunc("/logout", func(rw http.ResponseWriter, req *http.Request) {
-		http.SetCookie(rw, &http.Cookie{Name: "login-token", Value: "", Path: "/", Expires: time.Now().Add(-time.Second)})
+		http.SetCookie(rw, &http.Cookie{Name: "bigben-session", Value: "", Path: "/", Expires: time.Now().Add(-time.Second)})
 	})
-	router.HandleFunc("/{year}/{guild}", handleCheckLogin(oauthClient, func(rw http.ResponseWriter, req *http.Request, session *oauth2.Session, data loginData) {
+	router.HandleFunc("/{year}/{guild}", checkLogin(signer, oauthClient, func(rw http.ResponseWriter, req *http.Request, session *oauth2.Session, data loginData) {
 		if session == nil || !data.LoggedIn {
 			http.Redirect(rw, req, "/", http.StatusFound)
 			return
@@ -256,33 +272,37 @@ func main() {
 	log.Fatal("ListenAndServe(): ", srv.ListenAndServe())
 }
 
-func randStr(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-}
-
-func handleCheckLogin(oauthClient oauth2.Client, f func(rw http.ResponseWriter, req *http.Request, session *oauth2.Session, data loginData)) func(rw http.ResponseWriter, req *http.Request) {
+func checkLogin(signer mjwt.Signer, oauthClient oauth2.Client, f func(rw http.ResponseWriter, req *http.Request, session *oauth2.Session, data loginData)) func(rw http.ResponseWriter, req *http.Request) {
 	return func(rw http.ResponseWriter, req *http.Request) {
-		cookie, err := req.Cookie("login-token")
+		cookie, err := req.Cookie("bigben-session")
 		if err == nil {
-			session := oauthClient.SessionController().GetSession(cookie.Value)
-			if session != nil {
-				user, err := oauthClient.GetUser(session)
-				if err != nil {
-					http.Error(rw, "500 Failed to get user data", http.StatusInternalServerError)
-					return
-				}
-				f(rw, req, &session, loginData{
-					LoggedIn: true,
-					UserId:   user.ID.String(),
-					UserTag:  user.Tag(),
-					UserIcon: user.EffectiveAvatarURL(),
-				})
+			decryptDecode, err := base64.RawURLEncoding.DecodeString(cookie.Value)
+			if err != nil {
+				http.Error(rw, "500 Failed to decode cookie value", http.StatusInternalServerError)
 				return
 			}
+			decrypt, err := rsa.DecryptOAEP(sha256.New(), nil, signer.PrivateKey(), decryptDecode, []byte("bigben-session"))
+			if err != nil {
+				http.Error(rw, "500 Failed to read cookie value", http.StatusInternalServerError)
+				return
+			}
+			var oaSess oauth2.Session
+			if json.Unmarshal(decrypt, &oaSess) != nil {
+				http.Error(rw, "500 Error loading session", http.StatusInternalServerError)
+				return
+			}
+			user, err := oauthClient.GetUser(oaSess)
+			if err != nil {
+				http.Error(rw, "500 Failed to get user data", http.StatusInternalServerError)
+				return
+			}
+			f(rw, req, &oaSess, loginData{
+				LoggedIn: true,
+				UserId:   user.ID.String(),
+				UserTag:  user.Tag(),
+				UserIcon: user.EffectiveAvatarURL(),
+			})
+			return
 		}
 		f(rw, req, nil, loginData{
 			LoggedIn: false,
