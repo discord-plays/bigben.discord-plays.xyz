@@ -51,16 +51,16 @@ var (
 			},
 			"renderUser": func(users map[snowflake.ID]string, id snowflake.ID) string {
 				u := users[id]
-				if u == "" || len(u) <= 2 {
+				if u == "" {
 					return "Unknown User"
 				}
-				if u[len(u)-2:len(u)] == "#0" {
+				if len(u) > 5 && u[len(u)-5] == '#' {
+					return u[:len(u)-5]
+				}
+				if len(u) > 2 && u[len(u)-2] == '#' {
 					return u[:len(u)-2]
 				}
-				if u == "" || len(u) <= 5 {
-					return "Unknown User"
-				}
-				return u[:len(u)-5]
+				return u
 			},
 		}).Parse(rawLeaderboardPage)
 		if err != nil {
