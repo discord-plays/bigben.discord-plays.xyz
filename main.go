@@ -51,6 +51,12 @@ var (
 			},
 			"renderUser": func(users map[snowflake.ID]string, id snowflake.ID) string {
 				u := users[id]
+				if u == "" || len(u) <= 2 {
+					return "Unknown User"
+				}
+				if u[len(u)-2:len(u)-1] == "#0" {
+					return u[:len(u)-2]
+				}
 				if u == "" || len(u) <= 5 {
 					return "Unknown User"
 				}
