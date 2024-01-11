@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
+	"github.com/discord-plays/bigben.discord-plays.xyz/value"
 	"github.com/disgoorg/snowflake/v2"
-	"github.com/mrmelon54/bigben.mrmelon54.com/value"
 	"os"
 	"sync"
 )

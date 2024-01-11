@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"github.com/discord-plays/bigben.discord-plays.xyz/value"
 	"github.com/disgoorg/snowflake/v2"
-	"github.com/mrmelon54/bigben.mrmelon54.com/value"
 )
 
 func GetGuildData(m *map[snowflake.ID]*CacheData, guildId snowflake.ID) *CacheData {

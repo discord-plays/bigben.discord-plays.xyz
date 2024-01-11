@@ -1,9 +1,9 @@
 github.com/1f349/mjwt v0.2.1 h1:REdiM/MaNjYQwHvI39LaMPhlvMg4Vy9SgomWMsKTNz8=
 github.com/1f349/mjwt v0.2.1/go.mod h1:KEs6jd9JjWrQW+8feP2pGAU7pdA3aYTqjkT/YQr73PU=
-github.com/MrMelon54/bigben v0.0.0-20231225002045-ab5d5652e057 h1:O/UgCBeE3FHNDvtTxwx5uasY9Fhc5xlE+UIRmrj/sSw=
-github.com/MrMelon54/bigben v0.0.0-20231225002045-ab5d5652e057/go.mod h1:OGWgpif/aWP1FlGV46M8hbCshUU1LgmHObvcu7nuupo=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/discord-plays/bigben v0.0.1 h1:YZZToHoy14xsSgQBJljdrjKqAuUZjcI2qUayPwvfP2w=
+github.com/discord-plays/bigben v0.0.1/go.mod h1:IdrsTJ+DJneKdzaIGMynIe1KZB0BrvcrJAJeToJT6As=
 github.com/disgoorg/disgo v0.17.0 h1:/LcgXgPDhzHt3GkQ4cpjmIJBim1/VYfS31VhGYif3Ms=
 github.com/disgoorg/disgo v0.17.0/go.mod h1:AE2J/8oLR2PtYfqcARsk1mgBxQ5z3Z1OD6Lc2SA0gak=
 github.com/disgoorg/json v1.1.0 h1:7xigHvomlVA9PQw9bMGO02PHGJJPqvX5AnwlYg/Tnys=
