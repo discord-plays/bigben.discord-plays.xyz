@@ -54,7 +54,7 @@ var (
 				if u == "" || len(u) <= 2 {
 					return "Unknown User"
 				}
-				if u[len(u)-2:len(u)-1] == "#0" {
+				if u[len(u)-2:len(u)] == "#0" {
 					return u[:len(u)-2]
 				}
 				if u == "" || len(u) <= 5 {
